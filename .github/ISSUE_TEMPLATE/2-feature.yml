@@ -1,0 +1,29 @@
+# Filing through the API or `gh issue create`? Forms only apply on the web:
+# write the body with each field's label below as a `### ` heading, in order.
+name: Color or feature
+description: A sway or i3 color setting the port should set, or a new release to support.
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The port sets colors only. Gaps, borders, fonts and keys stay in your own config.
+  - type: input
+    id: setting
+    attributes:
+      label: Setting
+      placeholder: "client.focused_tab_title, bar focused_background"
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: sway or i3 version that added it
+      description: A link to the release notes or the man page helps.
+  - type: textarea
+    id: why
+    attributes:
+      label: Why
+      description: What looks off without it, and which spec colors you think it should use.
+    validations:
+      required: true

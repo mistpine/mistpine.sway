@@ -11,16 +11,18 @@
  *   pnpm generate --check  fail if any file is out of date
  *
  * Every color comes from palette/mistpine.json in the reference repository
- * (see lib/colors.ts). Before anything is written, every text color is
+ * (read by @mistpine/port-kit). Before anything is written, every text color is
  * checked against the background it sits on (4.5:1). pnpm verify then loads
  * the files in sway and i3 themselves.
  */
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
-import { contrast, loadSpec, mix, ROOT, type Spec } from "./lib/colors.ts";
+import { contrast, loadSpec, mix, type Spec } from "@mistpine/port-kit";
+
+const ROOT = join(import.meta.dirname, "..");
 
 const check = process.argv.includes("--check");
-const { spec, source } = await loadSpec();
+const { spec, source } = await loadSpec(ROOT);
 
 /** A palette key (`bg1`) or a spec token (`ui.panelBg`), resolved to its palette key. */
 function token(key: string): { hex: string; palette: string } {

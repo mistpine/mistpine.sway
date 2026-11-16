@@ -21,13 +21,15 @@
 import { execFileSync } from "node:child_process";
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { loadSpec, ROOT } from "./lib/colors.ts";
-import { image } from "./lib/docker.ts";
-import { type Expect, expectPixels, load } from "./lib/pixels.ts";
+import { loadSpec } from "@mistpine/port-kit";
+import { image } from "@mistpine/port-kit/docker";
+import { type Expect, expectPixels, load } from "@mistpine/port-kit/pixels";
+
+const ROOT = join(import.meta.dirname, "..");
 
 const WORK = join(ROOT, ".render");
 const ASSETS = join(ROOT, "assets");
-const { spec } = await loadSpec();
+const { spec } = await loadSpec(ROOT);
 const ui = (name: string) => (spec.ui[name]?.hex ?? "").toLowerCase();
 const pal = (name: string) => (spec.palette[name] ?? "").toLowerCase();
 
@@ -135,7 +137,7 @@ const failures: string[] = [];
 const uid = `${process.getuid?.() ?? 0}:${process.getgid?.() ?? 0}`;
 
 for (const release of RELEASES) {
-  const tag = image(release);
+  const tag = image({ name: "mistpine-sway", release, context: join(ROOT, "scripts", "render") });
   const out = join(WORK, release);
   mkdirSync(out, { recursive: true });
   terminals(out);

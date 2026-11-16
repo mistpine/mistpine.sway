@@ -19,8 +19,10 @@ import { execFileSync } from "node:child_process";
 import { mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { loadSpec, ROOT } from "./lib/colors.ts";
-import { image } from "./lib/docker.ts";
+import { loadSpec } from "@mistpine/port-kit";
+import { image } from "@mistpine/port-kit/docker";
+
+const ROOT = join(import.meta.dirname, "..");
 
 const RELEASES = { "24.04": ["1.9", "4.23"], "26.04": ["1.11", "4.25"] } as const;
 type Release = keyof typeof RELEASES;
@@ -36,7 +38,7 @@ function fail(message: string): never {
 
 // ---------------------------------------------------------------- expectations
 
-const { spec } = await loadSpec();
+const { spec } = await loadSpec(ROOT);
 const ui = (name: string) => {
   const hex = spec.ui[name]?.hex;
   if (!hex) fail(`the spec has no ui.${name}`);
@@ -168,7 +170,7 @@ function checkBar(file: string, label: string): void {
 }
 
 for (const release of releases) {
-  const tag = image(release);
+  const tag = image({ name: "mistpine-sway", release, context: join(ROOT, "scripts", "render") });
   const out = mkdtempSync(join(tmpdir(), "mistpine-sway-verify-"));
   try {
     execFileSync(
